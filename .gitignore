@@ -1,1 +1,5 @@
 /chaincode/*
+/organizations/fabric-ca
+/organizations/memberOrganizations
+/channel/CENTER_CHANNEL/center-channel.block
+/channel/PC02_PRIVATE_CHANNEL/pc02-private-channel.block

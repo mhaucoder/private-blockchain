@@ -80,7 +80,7 @@ Organizations:
                 Rule: "OR('PC02-PMSP.admin', 'PC02-PMSP.peer', 'PC02-PMSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('PC02-PMSP.admin')"
+                Rule: "OR('PC02-PMSP.admin','PC02-PMSP.client')"
             Admins:
                 Type: Signature
                 Rule: "OR('PC02-PMSP.admin')"

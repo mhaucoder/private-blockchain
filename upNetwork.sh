@@ -36,6 +36,7 @@ peer channel join -b ${PWD}/channel/CENTER_CHANNEL/${CHANNEL_NAME}.block
 setOrgPC02
 peer channel join -b ${PWD}/channel/CENTER_CHANNEL/${CHANNEL_NAME}.block
 
+sleep 5
 #Check chaincode
 if [ ! -d "${PWD}/../dev_extcc" ]; then
     echo "Not found folder chaincode dev_extc"
@@ -52,7 +53,7 @@ cd ${PWD}/../private-blockchain
 
 #Package chaincode
 peer lifecycle chaincode package ${PWD}/chaincode/chaincode_v1.tar.gz --path ${PWD}/../dev_extcc --lang node --label chaincode_v1_1.0
-sleep 3
+sleep 5
 PACKAGE_ID=$(peer lifecycle chaincode calculatepackageid ${PWD}/chaincode/chaincode_v1.tar.gz)
 
 #Install chanicode on peer CATPHCM
@@ -77,7 +78,7 @@ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameO
 
 #Commit chaincode
 peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride catphcm-o1.catphcm.gov.vn --channelID center-channel --name chaincode_v1 --version 1.0 --sequence 1 --signature-policy "OR('CATPHCM-PMSP.peer')" --tls --cafile ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses catphcm-p1.catphcm.gov.vn:7051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses pc02-p1.pc02.gov.vn:8051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem
-
+sleep 5
 #Invoke chaincode
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride catphcm-o1.catphcm.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem -C center-channel --name chaincode_v1 -c '{"function":"UserContract:initializeDataDefault","Args":["dev"]}' --peerAddresses catphcm-p1.catphcm.gov.vn:7051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses pc02-p1.pc02.gov.vn:8051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem
 sleep 1

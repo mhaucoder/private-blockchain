@@ -12,5 +12,5 @@ sudo rm -r -f ./organizations/fabric-ca
 sudo rm -r -f ./organizations/memberOrganizations
 sudo rm -f ./channel/CENTER_CHANNEL/*.block
 sudo rm -f ./channel/PC02_PRIVATE_CHANNEL/*.block
-sudo rm -f ./chaincode/*
+sudo rm -f ./chaincode/*.tar.gz
 

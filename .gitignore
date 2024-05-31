@@ -1,4 +1,4 @@
-/chaincode/*
+/chaincode/*.tar.gz
 /organizations/fabric-ca
 /organizations/memberOrganizations
 /channel/CENTER_CHANNEL/center-channel.block

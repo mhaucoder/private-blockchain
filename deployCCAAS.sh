@@ -1,6 +1,6 @@
 #!/bin/bash
 CC_NAME=$1
-CC_SRC_PATH="../../dev_extcc"
+CC_SRC_PATH=${PWD}/../../dev_extcc
 CCAAS_SERVER_PORT=9999
 CC_VERSION="1.0"
 export PATH=${PWD}/bin:$PATH
@@ -10,7 +10,7 @@ export FABRIC_CFG_PATH=$PWD/organizations/peercfg
 . setEnvVar.sh
 
 packageChaincode() {
-  address="{{.peername}}_${CC_NAME}_ccaas:${CCAAS_SERVER_PORT}"
+  address="${CC_NAME}_ccaas:${CCAAS_SERVER_PORT}"
   prefix=$(basename "$0")
   tempdir=$(mktemp -d -t "$prefix.XXXXXXXX") || error_exit "Error creating temporary directory"
   label=${CC_NAME}_${CC_VERSION}
@@ -52,17 +52,12 @@ buildDockerImages() {
 startDockerContainer() {
   # start the docker container
     set -x
-    docker run --rm -d --name catphcm-p1.catphcm.gov.vn_${CC_NAME}_ccaas  \
+    docker run --rm -d --name ${CC_NAME}_ccaas  \
                   --network cdnv-cahcm \
                   -e CHAINCODE_SERVER_ADDRESS=0.0.0.0:${CCAAS_SERVER_PORT} \
                   -e CHAINCODE_ID=$PACKAGE_ID -e CORE_CHAINCODE_ID_NAME=$PACKAGE_ID \
                     ${CC_NAME}_ccaas_image:latest
 
-    docker run  --rm -d --name pc02-p1.pc02.gov.vn_${CC_NAME}_ccaas \
-                  --network cdnv-cahcm \
-                  -e CHAINCODE_SERVER_ADDRESS=0.0.0.0:${CCAAS_SERVER_PORT} \
-                  -e CHAINCODE_ID=$PACKAGE_ID -e CORE_CHAINCODE_ID_NAME=$PACKAGE_ID \
-                    ${CC_NAME}_ccaas_image:latest
     res=$?
     { set +x; } 2>/dev/null
     cat log.txt
@@ -102,7 +97,6 @@ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameO
 peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride catphcm-o1.catphcm.gov.vn --channelID center-channel --name ${CC_NAME} --version 1.0 --sequence 1 --signature-policy "OR('CATPHCM-PMSP.peer')" --tls --cafile ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses catphcm-p1.catphcm.gov.vn:7051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses pc02-p1.pc02.gov.vn:8051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem
 sleep 5
 
-
 #Approved chaincode on peer PC02
 setOrgPC02
 peer lifecycle chaincode approveformyorg -o localhost:8050 --ordererTLSHostnameOverride pc02-o1.pc02.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem --channelID pc02-private-channel --name ${CC_NAME} --version 1.0 --package-id ${PACKAGE_ID} --sequence 1 --signature-policy "OR('PC02-PMSP.peer')"
@@ -124,7 +118,7 @@ sleep 3
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride catphcm-o1.catphcm.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem -C center-channel --name ${CC_NAME} -c '{"function":"OrganizationContract:initializeDataDefault","Args":["dev"]}'  --peerAddresses catphcm-p1.catphcm.gov.vn:7051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem --peerAddresses pc02-p1.pc02.gov.vn:8051 --tlsRootCertFiles ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem
 sleep 3
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride catphcm-o1.catphcm.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/catphcm.gov.vn/tlsca/tlsca.catphcm.gov.vn-cert.pem -C center-channel --name ${CC_NAME} -c '{"function":"PermissionContract:initializeDataDefault","Args":["dev"]}'
-
+sleep 3
 #Invoke chaincode
 setOrgPC02
 peer chaincode invoke -o localhost:8050 --ordererTLSHostnameOverride pc02-o1.pc02.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem -C pc02-private-channel -n ${CC_NAME} -c '{"function":"UserContract:initializeDataDefault","Args":["dev"]}'
@@ -134,5 +128,4 @@ sleep 3
 peer chaincode invoke -o localhost:8050 --ordererTLSHostnameOverride pc02-o1.pc02.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem -C pc02-private-channel -n ${CC_NAME} -c '{"function":"OrganizationContract:initializeDataDefault","Args":["dev"]}'
 sleep 3
 peer chaincode invoke -o localhost:8050 --ordererTLSHostnameOverride pc02-o1.pc02.gov.vn --tls --cafile ${PWD}/organizations/memberOrganizations/pc02.gov.vn/tlsca/tlsca.pc02.gov.vn-cert.pem -C pc02-private-channel -n ${CC_NAME} -c '{"function":"PermissionContract:initializeDataDefault","Args":["dev"]}'
-
-exit 0
+sleep 3

@@ -37,6 +37,27 @@ function fatalln() {
   exit 1
 }
 
+function checkFile() {
+    if [[ ! -f $1 ]]; then
+        errorln "Error: File $1 not found."
+        exit 1
+    fi
+}
+
+function checkFile() {
+    if [[ ! -f $1 ]]; then
+        errorln "Error: File $1 not found."
+        exit 1
+    fi
+}
+
+function checkFolder() {
+    if [[ ! -e $1 ]]; then
+        errorln "Error: Folder $1 not found."
+        exit 1
+    fi
+}
+
 export -f errorln
 export -f successln
 export -f infoln

@@ -1,5 +1,4 @@
 #!/bin/bash
-
 function createCATPHCM() {
   mkdir -p organizations/memberOrganizations/catphcm.gov.vn/
 

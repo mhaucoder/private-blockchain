@@ -1,15 +1,16 @@
-. registerEnroll.sh
-. setEnvVar.sh
+. scripts/registerEnroll.sh
+. scripts/setEnvVar.sh
 CHAINCODE_NAME=$1
+CC_SRC_PATH=${PWD}/../../dev_extcc
 # Install path tool
 export PATH=${PWD}/bin:$PATH
 #Check chaincode
-if [ ! -d "${PWD}/../../dev_extcc" ]; then
+if [ ! -d $CC_SRC_PATH ]; then
     echo "Not found folder chaincode dev_extc"
     exit 1
 fi
 
-cd ${PWD}/../../dev_extcc
+cd $CC_SRC_PATH
 
 npm install
 npm run build
@@ -20,7 +21,7 @@ mkdir -p chaincode
 
 #Package chaincode
 setOrgCATPHCM
-peer lifecycle chaincode package ${PWD}/chaincode/${CHAINCODE_NAME}.tar.gz --path ${PWD}/../dev_extcc --lang node --label ${CHAINCODE_NAME}_1.0
+peer lifecycle chaincode package ${PWD}/chaincode/${CHAINCODE_NAME}.tar.gz --path $CC_SRC_PATH --lang node --label ${CHAINCODE_NAME}_1.0
 sleep 3
 PACKAGE_ID=$(peer lifecycle chaincode calculatepackageid ${PWD}/chaincode/${CHAINCODE_NAME}.tar.gz)
 
